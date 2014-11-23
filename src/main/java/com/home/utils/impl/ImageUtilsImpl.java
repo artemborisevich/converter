@@ -1,14 +1,37 @@
-package com.home;
+package com.home.utils.impl;
+
+import com.home.dao.ImageDao;
+import com.home.dao.impl.ImageDaoImpl;
+import com.home.utils.ImageUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Created by User on 15.11.2014.
+ * Created by User on 22.11.2014.
  */
-public class Converter {
+public class ImageUtilsImpl implements ImageUtils, Runnable {
 
-    public BufferedImage scaleImage(BufferedImage img, int width, int height) {
+    BufferedImage img;
+    Integer width;
+    Integer height;
+    String url;
+    ImageDao imageDao = new ImageDaoImpl();
+
+    public ImageUtilsImpl(BufferedImage img, Integer width, Integer height, String url) {
+        this.img = img;
+        this.width = width;
+        this.height = height;
+        this.url = url;
+    }
+
+    @Override
+    public void run() {
+        imageDao.saveImage(scaleImage(img, width, height), url);
+    }
+
+    @Override
+    public BufferedImage scaleImage(BufferedImage img, Integer width, Integer height) {
         int imgWidth = img.getWidth();
         int imgHeight = img.getHeight();
         int startX = 0;
