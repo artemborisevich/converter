@@ -27,7 +27,11 @@ public class ImageUtilsImpl implements ImageUtils, Runnable {
 
     @Override
     public void run() {
-        imageDao.saveImage(scaleImage(img, width, height), url);
+        long i=0;
+        while (true) {
+            i++;
+        }
+        //imageDao.saveImage(scaleImage(img, width, height), url);
     }
 
     @Override
