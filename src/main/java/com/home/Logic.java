@@ -16,11 +16,12 @@ import java.util.concurrent.Executors;
  */
 public class Logic {
 
+    private static Integer maxThreads = Runtime.getRuntime().availableProcessors();
     ImageDao imageDao = new ImageDaoImpl();
 
     public void start() {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        ExecutorService threadPool = Executors.newFixedThreadPool(4);
+        ExecutorService threadPool = Executors.newFixedThreadPool(maxThreads);
         while (true) {
             try {
                 System.out.println("Enter urlFrom: ");
