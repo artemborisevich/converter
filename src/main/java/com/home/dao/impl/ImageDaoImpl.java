@@ -1,6 +1,8 @@
 package com.home.dao.impl;
 
 import com.home.dao.ImageDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -14,13 +16,15 @@ import static javax.imageio.ImageIO.write;
  */
 public class ImageDaoImpl implements ImageDao {
 
+    private Logger log = LoggerFactory.getLogger(getClass());
+
     @Override
     public BufferedImage getImage(String url) {
         BufferedImage image = null;
         try {
             image = ImageIO.read(new File(url));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug(null, e);
         }
         return image;
     }
@@ -30,7 +34,7 @@ public class ImageDaoImpl implements ImageDao {
         try {
             write(img, "JPG", new File(url));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug(null, e);
         }
     }
 }

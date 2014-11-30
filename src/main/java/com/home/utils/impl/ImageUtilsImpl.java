@@ -1,8 +1,7 @@
 package com.home.utils.impl;
 
-import com.home.dao.ImageDao;
-import com.home.dao.impl.ImageDaoImpl;
-import com.home.utils.ImageUtils;
+import com.home.service.ImageService;
+import com.home.service.impl.ImageServiceImpl;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -10,31 +9,29 @@ import java.awt.image.BufferedImage;
 /**
  * Created by User on 22.11.2014.
  */
-public class ImageUtilsImpl implements ImageUtils, Runnable {
 
-    BufferedImage img;
-    Integer width;
-    Integer height;
-    String url;
-    ImageDao imageDao = new ImageDaoImpl();
+@Deprecated
+public class ImageUtilsImpl implements Runnable {
 
-    public ImageUtilsImpl(BufferedImage img, Integer width, Integer height, String url) {
-        this.img = img;
+    private String urlFrom;
+    private Integer width;
+    private Integer height;
+    private String urlTo;
+    private ImageService imageService  = new ImageServiceImpl();;
+
+    public ImageUtilsImpl(String urlFrom, Integer width, Integer height, String urlTo) {
+        this.urlFrom = urlFrom;
         this.width = width;
         this.height = height;
-        this.url = url;
+        this.urlTo = urlTo;
     }
 
     @Override
     public void run() {
-        long i=0;
-        while (true) {
-            i++;
-        }
-        //imageDao.saveImage(scaleImage(img, width, height), url);
+        BufferedImage img = imageService.getImage(urlFrom);
+        imageService.saveImage(scaleImage(img, width, height), urlTo);
     }
 
-    @Override
     public BufferedImage scaleImage(BufferedImage img, Integer width, Integer height) {
         int imgWidth = img.getWidth();
         int imgHeight = img.getHeight();
