@@ -2,6 +2,7 @@ package com.home;
 
 import com.home.service.ImageService;
 import com.home.service.impl.ImageServiceImpl;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,6 @@ public class Main {
     public void logic (){
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         ExecutorService threadPool = Executors.newFixedThreadPool(MAX_THREADS);
-        ThreadMXBean mxbean = ManagementFactory.getThreadMXBean();
         try {
             while (true) {
                 System.out.println("Enter urlFrom: ");
@@ -46,9 +46,9 @@ public class Main {
                 System.out.println("Enter height: ");
                 height = Integer.valueOf(in.readLine());
 
-            if (mxbean.getThreadCount() == MAX_THREADS *2) {
+            if (Thread.activeCount() == MAX_THREADS + 1) {
                 System.out.println("wait");
-                while (mxbean.getThreadCount() == MAX_THREADS *2){}
+                while (Thread.activeCount() == MAX_THREADS + 1){}
                 System.out.println("go");
             }
                 threadPool.submit(new Thread() {
