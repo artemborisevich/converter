@@ -2,18 +2,15 @@ package com.home;
 
 import com.home.service.ImageService;
 import com.home.service.impl.ImageServiceImpl;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
 
@@ -23,55 +20,55 @@ public class Main {
     private ImageService imageService = new ImageServiceImpl();
     private String urlFrom;
     private String urlTo;
-    private Integer width;
-    private Integer height;
+    private String width;
+    private String bufUrlFrom;
+    private String bufUrlTo;
+    private Integer bufWidth;
+    private ThreadPoolExecutor threadPool = new ThreadPoolExecutor(MAX_THREADS, MAX_THREADS, 0, TimeUnit.NANOSECONDS, new LinkedBlockingQueue<Runnable>());
+    private Validator validator = new Validator();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Main main = new Main();
         main.enableHangupSupport();
         main.logic();
     }
 
-    public void logic (){
+    public void logic () {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        ExecutorService threadPool = Executors.newFixedThreadPool(MAX_THREADS);
-        try {
             while (true) {
-                System.out.println("Enter urlFrom: ");
-                urlFrom = in.readLine();
-                System.out.println("Enter urlTo: ");
-                urlTo = in.readLine();
-                System.out.println("Enter width: ");
-                width = Integer.valueOf(in.readLine());
-                System.out.println("Enter height: ");
-                height = Integer.valueOf(in.readLine());
+                try {
+                    do {
+                        System.out.println("Enter urlFrom: ");
+                        urlFrom = in.readLine();
+                    } while (!validator.dirValidator(urlFrom));
+                    do {
+                        System.out.println("Enter urlTo: ");
+                        urlTo = in.readLine();
+                    } while (!validator.dirValidator(urlFrom));
+                    do {
+                        System.out.println("Enter width: ");
+                        width = in.readLine();
+                    } while (!validator.widthValidator(width));
+                } catch (IOException e) {
+                    log.debug(null, e);
+                }
 
-            if (Thread.activeCount() == MAX_THREADS + 1) {
-                System.out.println("wait");
-                while (Thread.activeCount() == MAX_THREADS + 1){}
-                System.out.println("go");
+                imageService.waiter(threadPool, bufUrlFrom, bufUrlTo);
+
+                bufUrlFrom = urlFrom;
+                bufUrlTo = urlTo;
+                bufWidth = Integer.valueOf(width);
+
+                imageService.scaleImages(threadPool, bufUrlFrom, bufUrlTo, bufWidth);
             }
-                threadPool.submit(new Thread() {
-                    @Override
-                    public void run() {
-                        BufferedImage img = imageService.getImage(urlFrom);
-                        BufferedImage newImg = imageService.scaleImage(img, width, height);
-                        imageService.saveImage(newImg, urlTo);
-                    }
-                });
         }
-        } catch (IOException e) {
-            log.debug(null, e);
-            threadPool.shutdown();
-        }
-    }
 
-    public void enableHangupSupport() {
+    public void enableHangupSupport() throws IOException {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 log.info("Inside Add Shutdown Hook");
-                System.exit(0);
+                threadPool.shutdown();
             }
         });
         log.info("Shut Down Hook Attached.");

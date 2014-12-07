@@ -1,13 +1,12 @@
 package com.home.dao;
 
-import java.awt.image.BufferedImage;
+import java.io.File;
 
 /**
  * Created by User on 22.11.2014.
  */
 public interface ImageDao {
 
-    BufferedImage getImage(String url);
+    File[] getFiles(String url);
 
-    void saveImage(BufferedImage img, String url);
 }
