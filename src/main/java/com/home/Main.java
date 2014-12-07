@@ -51,3 +51,5 @@ public class Main {
         log.info("Shut Down Hook Attached.");
     }
 }
+
+//mvn exec:java -Dexec.mainClass="com.home.Main"
