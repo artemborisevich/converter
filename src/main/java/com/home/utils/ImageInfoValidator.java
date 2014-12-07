@@ -1,4 +1,4 @@
-package com.home.util;
+package com.home.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +8,7 @@ import java.io.File;
 /**
  * Created by User on 07.12.2014.
  */
-public class Validator {
+public class ImageInfoValidator {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 

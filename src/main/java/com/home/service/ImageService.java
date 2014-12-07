@@ -11,7 +11,5 @@ public interface ImageService {
 
     void scaleImages(ThreadPoolExecutor threadPool, String urlFrom, String urlTo, Integer width);
 
-    void waiter(ThreadPoolExecutor threadPool, String urlFrom, String urlTo);
-
     ImageInfo getImageInfo();
 }

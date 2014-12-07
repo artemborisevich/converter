@@ -4,7 +4,7 @@ import com.home.dao.ImageDao;
 import com.home.dao.impl.ImageDaoImpl;
 import com.home.model.ImageInfo;
 import com.home.service.ImageService;
-import com.home.util.Validator;
+import com.home.utils.ImageInfoValidator;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.name.Rename;
 import org.slf4j.Logger;
@@ -48,21 +48,10 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void waiter(ThreadPoolExecutor threadPool, String urlFrom, String urlTo) {
-        if (threadPool.getTaskCount() != threadPool.getCompletedTaskCount() && threadPool.getTaskCount() != 0) {
-                    System.out.println("Previous conversion from " + urlFrom + " to " + urlTo + " is in progress, waiting");
-                    while (threadPool.getTaskCount() != threadPool.getCompletedTaskCount()) {
-                        Thread.yield();
-                    }
-                    System.out.println("Starting to process entered data!");
-                }
-    }
-
-    @Override
     public ImageInfo getImageInfo() {
         ImageInfo imageInfo = new ImageInfo();
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        Validator validator = new Validator();
+        ImageInfoValidator validator = new ImageInfoValidator();
         try {
             do {
                 System.out.println("Enter urlFrom: ");

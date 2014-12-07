@@ -3,6 +3,7 @@ package com.home;
 import com.home.model.ImageInfo;
 import com.home.service.ImageService;
 import com.home.service.impl.ImageServiceImpl;
+import com.home.utils.Waiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ public class Main {
     public void logic () {
             while (true) {
                 ImageInfo imageInfo = imageService.getImageInfo();
-                imageService.waiter(threadPool, bufUrlFrom, bufUrlTo);
+                Waiter.wait(threadPool, bufUrlFrom, bufUrlTo);
 
                 bufUrlFrom = imageInfo.getUrlFrom();
                 bufUrlTo = imageInfo.getUrlTo();
