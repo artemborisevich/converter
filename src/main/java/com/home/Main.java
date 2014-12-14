@@ -4,7 +4,7 @@ import com.home.model.ImageInfo;
 import com.home.service.ImageService;
 import com.home.service.impl.ImageServiceImpl;
 import com.home.utils.ImageInfoValidator;
-import com.home.utils.Waiter;
+import com.home.utils.ProgressChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public class Main {
                 } catch (IOException e) {
                     log.debug("input error", e);
                 }
-                Waiter.wait(threadPool, bufUrlFrom, bufUrlTo);
+                ProgressChecker.check(threadPool, bufUrlFrom, bufUrlTo);
 
                 bufUrlFrom = imageInfo.getUrlFrom();
                 bufUrlTo = imageInfo.getUrlTo();
