@@ -3,11 +3,14 @@ package com.home;
 import com.home.model.ImageInfo;
 import com.home.service.ImageService;
 import com.home.service.impl.ImageServiceImpl;
+import com.home.utils.ImageInfoValidator;
 import com.home.utils.Waiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -17,9 +20,12 @@ public class Main {
     private static final Integer MAX_THREADS = Runtime.getRuntime().availableProcessors();
 
     private Logger log = LoggerFactory.getLogger(getClass());
-    private ImageService imageService = new ImageServiceImpl();
     private String bufUrlFrom;
     private String bufUrlTo;
+    private ImageService imageService = new ImageServiceImpl();
+    private ImageInfo imageInfo = new ImageInfo();
+    private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    private ImageInfoValidator validator = new ImageInfoValidator();
     private ThreadPoolExecutor threadPool = new ThreadPoolExecutor(MAX_THREADS, MAX_THREADS, 0, TimeUnit.NANOSECONDS, new LinkedBlockingQueue<Runnable>());
 
     public static void main(String[] args) throws IOException {
@@ -30,7 +36,22 @@ public class Main {
 
     public void logic () {
             while (true) {
-                ImageInfo imageInfo = imageService.getImageInfo();
+                try {
+                    do {
+                        System.out.println("Enter urlFrom: ");
+                        imageInfo.setUrlFrom(in.readLine());
+                    } while (!validator.dirValidator(imageInfo.getUrlFrom()));
+                    do {
+                        System.out.println("Enter urlTo: ");
+                        imageInfo.setUrlTo(in.readLine());
+                    } while (!validator.dirValidator(imageInfo.getUrlTo()));
+                    do {
+                        System.out.println("Enter width: ");
+                        imageInfo.setWidth(in.readLine());
+                    } while (!validator.widthValidator(imageInfo.getWidth()));
+                } catch (IOException e) {
+                    log.debug("input error", e);
+                }
                 Waiter.wait(threadPool, bufUrlFrom, bufUrlTo);
 
                 bufUrlFrom = imageInfo.getUrlFrom();
@@ -45,7 +66,7 @@ public class Main {
             @Override
             public void run() {
                 log.info("Inside Add Shutdown Hook");
-                threadPool.shutdown();
+                threadPool.shutdownNow();
             }
         });
         log.info("Shut Down Hook Attached.");
