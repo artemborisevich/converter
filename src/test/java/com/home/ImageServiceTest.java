@@ -29,36 +29,49 @@ public class ImageServiceTest {
     public TemporaryFolder folder = new TemporaryFolder();
 
     private File testImg;
+    private File testImages;
 
     @Before
     public void createTestData() throws IOException {
         testImg = new File("src\\test\\resources\\test.jpg");
+        testImages = new File("src\\test\\resources");
     }
 
     @Test
     public void testScaleImage() throws IOException {
-        File src = folder.newFolder("src");
-        service.scaleImage(threadPool, testImg, src.getPath(), 400);
+        File dir = folder.newFolder("src");
+        service.scaleImage(threadPool, testImg, dir.getPath(), 400);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        BufferedImage image = ImageIO.read(new File(src.getPath() + "\\test.jpg"));
-        assertNotNull(image);
+        BufferedImage image = ImageIO.read(new File(dir.getPath() + "/" + testImg.getName()));
         assertEquals(400, image.getWidth());
     }
 
     @Test
     public void testScaleNotImage() throws IOException {
-        File src = folder.newFolder("src");
+        File dir = folder.newFolder("dir");
         File file = folder.newFile("test.txt");
-        service.scaleImage(threadPool, file, src.getPath(), 400);
+        service.scaleImage(threadPool, file, dir.getPath(), 400);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertEquals(0, src.listFiles().length);
+        assertEquals(0, dir.listFiles().length);
+    }
+
+    @Test
+    public void testScaleImages() throws IOException {
+        File dir = folder.newFolder("dir");
+        service.scaleImages(threadPool, testImages.getPath(), dir.getPath(), 400);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertEquals(2, dir.listFiles().length);
     }
 }
