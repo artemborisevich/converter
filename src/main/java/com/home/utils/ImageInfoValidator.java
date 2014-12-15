@@ -12,7 +12,7 @@ public class ImageInfoValidator {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    public boolean dirValidator(String url) {
+    public boolean validateDir(String url) {
         File file = new File(url);
 
         if (!file.exists()){
@@ -27,7 +27,7 @@ public class ImageInfoValidator {
         return true;
     }
 
-    public boolean widthValidator(String width){
+    public boolean validateWidth(String width){
         try {
             Integer.parseInt(width);
         } catch(NumberFormatException e) {

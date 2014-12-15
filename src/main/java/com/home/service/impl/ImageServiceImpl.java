@@ -31,7 +31,7 @@ public class ImageServiceImpl implements ImageService {
                             .outputQuality(0.99)
                             .toFiles(new File(urlTo), Rename.NO_CHANGE);
                 } catch (IOException e) {
-                    log.debug(null, e);
+                    log.debug("input error", e);
                 } catch (IllegalArgumentException el) {
                     log.debug("incorrect format", el);
                 }

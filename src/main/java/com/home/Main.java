@@ -40,15 +40,15 @@ public class Main {
                     do {
                         System.out.println("Enter urlFrom: ");
                         imageInfo.setUrlFrom(in.readLine());
-                    } while (!validator.dirValidator(imageInfo.getUrlFrom()));
+                    } while (!validator.validateDir(imageInfo.getUrlFrom()));
                     do {
                         System.out.println("Enter urlTo: ");
                         imageInfo.setUrlTo(in.readLine());
-                    } while (!validator.dirValidator(imageInfo.getUrlTo()));
+                    } while (!validator.validateDir(imageInfo.getUrlTo()));
                     do {
                         System.out.println("Enter width: ");
                         imageInfo.setWidth(in.readLine());
-                    } while (!validator.widthValidator(imageInfo.getWidth()));
+                    } while (!validator.validateWidth(imageInfo.getWidth()));
                 } catch (IOException e) {
                     log.debug("input error", e);
                 }
