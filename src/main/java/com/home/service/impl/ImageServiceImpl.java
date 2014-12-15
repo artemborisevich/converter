@@ -5,6 +5,7 @@ import com.home.dao.impl.ImageDaoImpl;
 import com.home.service.ImageService;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.name.Rename;
+import net.coobird.thumbnailator.tasks.UnsupportedFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,10 +31,10 @@ public class ImageServiceImpl implements ImageService {
                             .outputFormat("JPEG")
                             .outputQuality(0.99)
                             .toFiles(new File(urlTo), Rename.NO_CHANGE);
+                } catch (UnsupportedFormatException uf) {
+                    log.debug("unsupported format", uf);
                 } catch (IOException e) {
                     log.debug("input error", e);
-                } catch (IllegalArgumentException el) {
-                    log.debug("incorrect format", el);
                 }
             }
         });
