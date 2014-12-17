@@ -8,8 +8,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public interface ImageService {
 
-    void scaleImages(ThreadPoolExecutor threadPool, String urlFrom, String urlTo, Integer width);
+    void scaleImagesInThread(ThreadPoolExecutor threadPool, String urlFrom, String urlTo, Integer width);
 
-    void scaleImage(ThreadPoolExecutor threadPool, File file, String urlTo, Integer width);
+    void scaleImage(File file, String urlTo, Integer width);
 
 }

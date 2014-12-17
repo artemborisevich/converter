@@ -1,11 +1,16 @@
 package com.home;
 
+import com.home.dao.ImageDao;
 import com.home.service.ImageService;
 import com.home.service.impl.ImageServiceImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -15,37 +20,37 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by User on 30.11.2014.
  */
+
 public class ImageServiceTest {
 
+    @InjectMocks
     private ImageService service = new ImageServiceImpl();
-    private ThreadPoolExecutor threadPool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors(), 0, TimeUnit.NANOSECONDS, new LinkedBlockingQueue<Runnable>());
+
+    @Mock
+    private ImageDao dao;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
     private File testImg;
-    private File testImages;
 
     @Before
     public void createTestData() throws IOException {
         testImg = new File("src\\test\\resources\\test.jpg");
-        testImages = new File("src\\test\\resources");
+        MockitoAnnotations.initMocks(this);
+
     }
 
     @Test
     public void testScaleImage() throws IOException {
-        File dir = folder.newFolder("src");
-        service.scaleImage(threadPool, testImg, dir.getPath(), 400);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        File dir = folder.newFolder("dir");
+        service.scaleImage(testImg, dir.getPath(), 400);
         BufferedImage image = ImageIO.read(new File(dir.getPath() + "/" + testImg.getName()));
         assertEquals(400, image.getWidth());
     }
@@ -54,24 +59,17 @@ public class ImageServiceTest {
     public void testScaleNotImage() throws IOException {
         File dir = folder.newFolder("dir");
         File file = folder.newFile("test.txt");
-        service.scaleImage(threadPool, file, dir.getPath(), 400);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        service.scaleImage(file, dir.getPath(), 400);
         assertEquals(0, dir.listFiles().length);
     }
 
     @Test
-    public void testScaleImages() throws IOException {
-        File dir = folder.newFolder("dir");
-        service.scaleImages(threadPool, testImages.getPath(), dir.getPath(), 400);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertEquals(2, dir.listFiles().length);
+    public void testScaleImagesInThread() throws IOException {
+        File[] files = {testImg};
+
+        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(4, 4, 0, TimeUnit.NANOSECONDS, new LinkedBlockingQueue<Runnable>());
+        Mockito.when(dao.getFiles("dir")).thenReturn(files);
+        service.scaleImagesInThread(threadPool, "dir", "dir", 400);
+        verify(dao).getFiles("dir");
     }
 }

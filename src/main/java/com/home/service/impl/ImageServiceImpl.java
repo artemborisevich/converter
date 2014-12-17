@@ -21,30 +21,30 @@ public class ImageServiceImpl implements ImageService {
     private Logger log = LoggerFactory.getLogger(getClass());
     private ImageDao dao = new ImageDaoImpl();
 
-    public void scaleImage(ThreadPoolExecutor threadPool, final File file, final String urlTo, final Integer width) {
-        threadPool.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thumbnails.of(file)
-                            .width(width)
-                            .outputFormat("JPEG")
-                            .outputQuality(0.99)
-                            .toFiles(new File(urlTo), Rename.NO_CHANGE);
-                } catch (UnsupportedFormatException uf) {
-                    log.debug("unsupported format", uf);
-                } catch (IOException e) {
-                    log.debug("input error", e);
-                }
-            }
-        });
+    public void scaleImage(File file, String urlTo, Integer width) {
+        try {
+            Thumbnails.of(file)
+                    .width(width)
+                    .outputFormat("JPEG")
+                    .outputQuality(0.99)
+                    .toFiles(new File(urlTo), Rename.NO_CHANGE);
+        } catch (UnsupportedFormatException uf) {
+            log.debug("unsupported format", uf);
+        } catch (IOException e) {
+            log.debug("input error", e);
+        }
     }
 
     @Override
-    public void scaleImages(ThreadPoolExecutor threadPool, String urlFrom, final String urlTo, final Integer width) {
+    public void scaleImagesInThread(ThreadPoolExecutor threadPool, String urlFrom, final String urlTo, final Integer width) {
         File[] files = dao.getFiles(urlFrom);
         for (final File file : files) {
-            scaleImage(threadPool, file, urlTo, width);
+            threadPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    scaleImage(file, urlTo, width);
+                }
+            });
         }
     }
 }

@@ -57,7 +57,7 @@ public class Main {
                 bufUrlFrom = imageInfo.getUrlFrom();
                 bufUrlTo = imageInfo.getUrlTo();
 
-                imageService.scaleImages(threadPool, bufUrlFrom, bufUrlTo, Integer.valueOf(imageInfo.getWidth()));
+                imageService.scaleImagesInThread(threadPool, bufUrlFrom, bufUrlTo, Integer.valueOf(imageInfo.getWidth()));
             }
         }
 
